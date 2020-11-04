@@ -40,7 +40,7 @@ client.on('message', message => {
 
 	if (!command) return;
 
-	if (command.ownerOnly && message.author!=message.guild.owner.user) {
+	if (command.ownerOnly && (message.channel.type==='dm' || message.author!=message.guild.owner.user)) {
 		// console.log(message.author);
 		// console.log(message.guild.owner);
 		return message.reply('You don\'t have the necessary permissions!');
