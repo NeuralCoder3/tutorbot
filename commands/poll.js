@@ -1,32 +1,32 @@
 const { MessageEmbed } = require('discord.js');
-// const Canvas = require('canvas');
+const Canvas = require('canvas');
 
 
-// const applyText = (canvas, text,xpos,ypos) => {
-// 	const ctx = canvas.getContext('2d');
+const applyText = (canvas, text,xpos,ypos) => {
+	const ctx = canvas.getContext('2d');
 
-// 	let fontSize = 70;
+	let fontSize = 70;
 
-// 	do {
-// 		ctx.font = `${fontSize -= 1}px sans-serif`;
-// 	} while (ctx.measureText(text).width > canvas.width - xpos || ctx.measureText(text).height > canvas.height - ypos);
+	do {
+		ctx.font = `${fontSize -= 1}px sans-serif`;
+	} while (ctx.measureText(text).width > canvas.width - xpos || ctx.measureText(text).height > canvas.height - ypos);
 
-// 	return (ctx.font,fontSize);
-// };
+	return (ctx.font,fontSize);
+};
 
-// function generateHslaColors (saturation, lightness, alpha, amount) {
-//   let colors = []
-//   let huedelta = Math.trunc(360 / amount)
+function generateHslaColors (saturation, lightness, alpha, amount) {
+  let colors = []
+  let huedelta = Math.trunc(360 / amount)
 
-//   for (let i = 0; i < amount; i++) {
-//     let hue = i * huedelta
-// 	// colors.push(`hsla(${hue},${saturation}%,${lightness}%,${alpha})`)
-// 	col=`hsla(${hue},${saturation}%,${lightness}%,${alpha})`;
-// 	colors.push(Color(col).hex());
-//   }
+  for (let i = 0; i < amount; i++) {
+    let hue = i * huedelta
+	// colors.push(`hsla(${hue},${saturation}%,${lightness}%,${alpha})`)
+	col=`hsla(${hue},${saturation}%,${lightness}%,${alpha})`;
+	colors.push(Color(col).hex());
+  }
 
-//   return colors
-// }
+  return colors
+}
 
 function sendImage(channel,options) {
 	const canvas = Canvas.createCanvas(500, 250+40);
@@ -80,7 +80,7 @@ function sendImage(channel,options) {
 	for (let idx = 0; idx < options.length; idx++) {
 		ctx.fillStyle = colors[idx % colors.length];
 
-		ay=y+idx*(fontSize+fontSize/4);
+		ay=y+idx*(fontSize+fontSize/2);
 		ctx.fillRect(x,ay,fontSize,fontSize);
 	}
 
@@ -162,9 +162,9 @@ const pollEmbed = async (msg, title, options, timeout = 30, emojiList = defEmoji
 		for (const emoji in emojiInfo) text += `\`${emojiInfo[emoji].option}\` - \`${emojiInfo[emoji].votes}\`\n\n`;
 		poll.delete();
 		msg.channel.send(embedBuilder(title, msg.author.tag).setDescription(text));
-		// options=[];
-		// for (const emoji in emojiInfo) options.push([emojiInfo[emoji].option,emojiInfo[emoji].votes+1]);
-		// sendImage(msg.channel,options);
+		options=[];
+		for (const emoji in emojiInfo) options.push([emojiInfo[emoji].option,emojiInfo[emoji].votes+1]);
+		sendImage(msg.channel,options);
 	});
 };
 
