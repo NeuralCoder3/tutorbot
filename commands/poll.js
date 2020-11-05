@@ -1,4 +1,100 @@
 const { MessageEmbed } = require('discord.js');
+const Canvas = require('canvas');
+
+
+const applyText = (canvas, text,xpos,ypos) => {
+	const ctx = canvas.getContext('2d');
+
+	let fontSize = 70;
+
+	do {
+		ctx.font = `${fontSize -= 1}px sans-serif`;
+	} while (ctx.measureText(text).width > canvas.width - xpos || ctx.measureText(text).height > canvas.height - ypos);
+
+	return (ctx.font,fontSize);
+};
+
+function generateHslaColors (saturation, lightness, alpha, amount) {
+  let colors = []
+  let huedelta = Math.trunc(360 / amount)
+
+  for (let i = 0; i < amount; i++) {
+    let hue = i * huedelta
+	// colors.push(`hsla(${hue},${saturation}%,${lightness}%,${alpha})`)
+	col=`hsla(${hue},${saturation}%,${lightness}%,${alpha})`;
+	colors.push(Color(col).hex());
+  }
+
+  return colors
+}
+
+function sendImage(channel,options) {
+	const canvas = Canvas.createCanvas(500, 250+40);
+	mid=canvas.height/2;
+	const ctx = canvas.getContext('2d');
+  
+  var colors = ['#4CAF50', '#00BCD4', '#E91E63', '#FFC107', '#9E9E9E', '#CDDC39', '#18FFFF', '#F44336', '#FFF59D', '#6D4C41'];
+
+  var angles=[];
+
+	// options=[["A",10],["B",2],["eklwrhjwel",5],["D",1],["E",3]];
+	sum=0;
+	text="";
+	for (let idx = 0; idx < options.length; idx++) {
+		var [name,votes]=options[idx];
+		sum+=votes;
+		text+=name+"\n";
+	}
+	for (let idx = 0; idx < options.length; idx++) {
+		var [_,votes]=options[idx];
+        angles.push(Math.PI*2*votes/sum);
+	}
+
+
+
+  var offset = 10;
+  var beginAngle = 0;
+  var endAngle = 0;
+  var offsetX, offsetY, medianAngle;
+  
+  for(var i = 0; i < angles.length; i = i + 1) {
+    beginAngle = endAngle;
+    endAngle = endAngle + angles[i];
+    medianAngle = (endAngle + beginAngle) / 2;
+    offsetX = Math.cos(medianAngle) * offset;
+    offsetY = Math.sin(medianAngle) * offset;
+    ctx.beginPath();
+    ctx.fillStyle = colors[i % colors.length];
+    ctx.moveTo(mid + offsetX, mid + offsetY);
+    ctx.arc(mid + offsetX, mid + offsetY, 120, beginAngle, endAngle);
+    ctx.lineTo(mid + offsetX, mid + offsetY);
+    ctx.stroke();
+    ctx.fill();
+  }
+
+
+	x=canvas.height+10;
+	y=20;
+	ctx.font,fontSize = applyText(canvas, text,x+40,y);
+
+	for (let idx = 0; idx < options.length; idx++) {
+		ctx.fillStyle = colors[idx % colors.length];
+
+		ay=y+idx*(fontSize+fontSize/4);
+		ctx.fillRect(x,ay,fontSize,fontSize);
+	}
+
+	x+=fontSize;
+	y+=fontSize;
+	ctx.fillStyle = '#ffffff';
+	ctx.fillText(text, x, y);
+
+	const attachment = new Discord.MessageAttachment(canvas.toBuffer(), 'welcome-image.png');
+	channel.send(``, attachment);
+}
+
+
+
 
 const defEmojiList = [
 	'\u0031\u20E3',
@@ -66,6 +162,9 @@ const pollEmbed = async (msg, title, options, timeout = 30, emojiList = defEmoji
 		for (const emoji in emojiInfo) text += `\`${emojiInfo[emoji].option}\` - \`${emojiInfo[emoji].votes}\`\n\n`;
 		poll.delete();
 		msg.channel.send(embedBuilder(title, msg.author.tag).setDescription(text));
+		options=[];
+		for (const emoji in emojiInfo) options.push([emojiInfo[emoji].option,emojiInfo[emoji].votes+1]);
+		sendImage(msg.channel,options);
 	});
 };
 
