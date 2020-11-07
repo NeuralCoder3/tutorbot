@@ -9,8 +9,8 @@ const applyText = (canvas, text,xpos,ypos) => {
 
 	do {
 		ctx.font = `${fontSize -= 1}px sans-serif`;
-		console.log(ctx.measureText(text));
-		console.log(ctx.measureText(text).height , canvas.height - ypos);
+		// console.log(ctx.measureText(text));
+		// console.log(ctx.measureText(text).height , canvas.height - ypos);
 	} while (ctx.measureText(text).width > canvas.width - xpos || ctx.measureText(text).actualBoundingBoxDescent+ctx.measureText(text).actualBoundingBoxAscent > canvas.height - ypos);
 
 	return (ctx.font,fontSize);
@@ -137,7 +137,6 @@ const pollEmbed = async (msg, title, options, timeout = 30, emojiList = defEmoji
 	usedEmojis.push(forceEndPollEmoji);
 
 	const poll = await msg.channel.send(embedBuilder(title, msg.author.tag).setDescription(text));
-	for (const emoji of usedEmojis) await poll.react(emoji);
 
 	const reactionCollector = poll.createReactionCollector(
 		(reaction, user) => usedEmojis.includes(reaction.emoji.name) && !user.bot,
@@ -176,6 +175,11 @@ const pollEmbed = async (msg, title, options, timeout = 30, emojiList = defEmoji
 		for (const emoji in emojiInfo) options.push([emojiInfo[emoji].option,emojiInfo[emoji].votes]);
 		sendImage(msg.channel,options);
 	});
+
+	// console.log();
+	// await Promise.all(usedEmojis.map( e => new Promise((resolve) => resolve(poll.react(e)))));
+
+	for (const emoji of usedEmojis) await poll.react(emoji);
 };
 
 const embedBuilder = (title, author) => {
