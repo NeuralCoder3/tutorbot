@@ -45,6 +45,13 @@ function sendImage(channel,options) {
 		sum+=votes;
 		text+=name+"\n";
 	}
+	if(sum==0){
+		for (let idx = 0; idx < options.length; idx++) {
+			options[idx][1]+=1;
+			// console.log(options[idx]);
+		}
+		sum=options.length;
+	}
 	for (let idx = 0; idx < options.length; idx++) {
 		var [_,votes]=options[idx];
         angles.push(Math.PI*2*votes/sum);
@@ -89,7 +96,7 @@ function sendImage(channel,options) {
 	ctx.fillStyle = '#ffffff';
 	ctx.fillText(text, x, y);
 
-	const attachment = new Discord.MessageAttachment(canvas.toBuffer(), 'welcome-image.png');
+	const attachment = new Discord.MessageAttachment(canvas.toBuffer(), 'poll.png');
 	channel.send(``, attachment);
 }
 
@@ -163,7 +170,7 @@ const pollEmbed = async (msg, title, options, timeout = 30, emojiList = defEmoji
 		poll.delete();
 		msg.channel.send(embedBuilder(title, msg.author.tag).setDescription(text));
 		options=[];
-		for (const emoji in emojiInfo) options.push([emojiInfo[emoji].option,emojiInfo[emoji].votes+1]);
+		for (const emoji in emojiInfo) options.push([emojiInfo[emoji].option,emojiInfo[emoji].votes]);
 		sendImage(msg.channel,options);
 	});
 };
