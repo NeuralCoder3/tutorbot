@@ -9,7 +9,9 @@ const applyText = (canvas, text,xpos,ypos) => {
 
 	do {
 		ctx.font = `${fontSize -= 1}px sans-serif`;
-	} while (ctx.measureText(text).width > canvas.width - xpos || ctx.measureText(text).height > canvas.height - ypos);
+		console.log(ctx.measureText(text));
+		console.log(ctx.measureText(text).height , canvas.height - ypos);
+	} while (ctx.measureText(text).width > canvas.width - xpos || ctx.measureText(text).actualBoundingBoxDescent+ctx.measureText(text).actualBoundingBoxAscent > canvas.height - ypos);
 
 	return (ctx.font,fontSize);
 };
@@ -88,6 +90,7 @@ function sendImage(channel,options) {
 		ctx.fillStyle = colors[idx % colors.length];
 
 		ay=y+idx*(fontSize+fontSize/2);
+		// ay=y+idx*(fontSize+fontSize/3);
 		ctx.fillRect(x,ay,fontSize,fontSize);
 	}
 
