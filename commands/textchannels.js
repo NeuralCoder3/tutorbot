@@ -3,9 +3,12 @@ module.exports = {
     handler: (oldMember,newMember) => {
         if(oldMember.channel)
         {
+          if(newMember.channel && newMember.channel==oldMember.channel){
+            return;
+          }
   let oldRole=oldMember.guild.roles.cache.find(role => role.name==oldMember.channel.name);
   if(oldRole){
-	oldMember.member.roles.remove(oldRole);
+    oldMember.member.roles.remove(oldRole);
   }
     }
 
