@@ -201,6 +201,6 @@ module.exports = {
 			args2.push(element);
 		}
         // console.log(args2);
-        await pollEmbed(message,args2[0],args2.slice(1));
+        await pollEmbed(message,args2[0],args2.slice(1),120);
     }
 };
