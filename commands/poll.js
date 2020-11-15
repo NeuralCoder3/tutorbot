@@ -119,7 +119,7 @@ const defEmojiList = [
 	'\uD83D\uDD1F'
 ];
 
-const pollEmbed = async (msg, title, options, timeout = 30, emojiList = defEmojiList.slice(), forceEndPollEmoji = '\u2705') => {
+const pollEmbed = async (msg, title, options, timeout = 30, mult=false, emojiList = defEmojiList.slice(), forceEndPollEmoji = '\u2705') => {
 	if (!msg && !msg.channel) return msg.reply('Channel is inaccessible.');
 	if (!title) return msg.reply('Poll title is not given.');
 	if (!options) return msg.reply('Poll options are not given.');
@@ -148,7 +148,8 @@ const pollEmbed = async (msg, title, options, timeout = 30, emojiList = defEmoji
 			if (reaction.emoji.name === forceEndPollEmoji && msg.author.id === user.id) return reactionCollector.stop();
 			if (!voterInfo.has(user.id)) voterInfo.set(user.id, { emoji: reaction.emoji.name });
 			const votedEmoji = voterInfo.get(user.id).emoji;
-			if (votedEmoji !== reaction.emoji.name) {
+			if (votedEmoji !== reaction.emoji.name && !mult) {
+			// if (!mult) {
 				// const lastVote = poll.reactions.get(votedEmoji);
 				// lastVote.count -= 1;
 				// lastVote.users.remove(user.id);
@@ -191,6 +192,7 @@ const embedBuilder = (title, author) => {
 
 module.exports = {
 	name: 'poll',
+	pollEmbed: pollEmbed,
 	description: '',
 	args: true,
 	async execute(message,args) {
