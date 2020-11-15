@@ -180,7 +180,7 @@ const pollEmbed = async (msg, title, options, timeout = 30, mult=false, emojiLis
 	// console.log();
 	// await Promise.all(usedEmojis.map( e => new Promise((resolve) => resolve(poll.react(e)))));
 
-	for (const emoji of usedEmojis) await poll.react(emoji);
+	for (const emoji of usedEmojis) try { poll.react(emoji) }catch(e) {};
 };
 
 const embedBuilder = (title, author) => {
