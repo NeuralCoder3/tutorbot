@@ -6,6 +6,7 @@ const readline = require('readline');
 const Keyv = require('keyv');
 
 const client = new Discord.Client();
+global.client=client;
 client.commands = new Discord.Collection();
 
 // console.log(`sqlite:${__dirname}/data.sqlite`);
